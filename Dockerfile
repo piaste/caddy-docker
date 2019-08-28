@@ -24,6 +24,10 @@ LABEL caddy_version="$version"
 # Let's Encrypt Agreement
 ENV ACME_AGREE="false"
 
+# Caddyfile path; can be either a build or an environment var
+ARG caddyfile="/etc/Caddyfile"
+ENV CADDYFILE=${caddyfile}
+
 # Telemetry Stats
 ENV ENABLE_TELEMETRY="$enable_telemetry"
 
@@ -45,11 +49,12 @@ EXPOSE 80 443 2015
 VOLUME /root/.caddy /srv
 WORKDIR /srv
 
-COPY Caddyfile /etc/Caddyfile
+# build caddyfile goes in the default path
+COPY Caddyfile ${caddyfile}
 COPY index.html /srv/index.html
 
 # install process wrapper
 COPY --from=builder /go/bin/parent /bin/parent
 
 ENTRYPOINT ["/bin/parent", "caddy"]
-CMD ["--conf", "/etc/Caddyfile", "--log", "stdout", "--agree=$ACME_AGREE"]
+CMD ["--conf", "$CADDYFILE", "--log", "stdout", "--agree=$ACME_AGREE"]

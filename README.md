@@ -95,6 +95,28 @@ Replace `github.com/abiosoft/webtest` with your repository.
 $ printf "0.0.0.0\nroot src\ngit github.com/abiosoft/webtest" > Caddyfile
 ```
 
+##### Change the Caddyfile path
+
+You may want to keep the Caddyfile in a different path (for example, to volume mount a directory instead of a single file).
+
+You can either use `caddyfile` as a build argument at creation time:
+
+```
+docker build --build-arg \
+    caddyfile=/etc/Caddy/Caddyfile \
+    github.com/abiosoft/caddy-docker.git
+```
+
+or `$CADDYFILE` as an environment variable at runtime:
+
+```sh
+$ docker run \
+     -e "CADDYFILE=/etc/Caddy/Caddyfile" \
+     -v caddy_cfg:/etc/Caddy \
+     -p 2015:2015 \
+     -d abiosoft/caddy
+```
+
 ##### Run the image
 
 ```sh
